@@ -1,337 +1,756 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Cow: Qurbani Comics</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;700&family=Bangers&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --marvel-red: #ed1d24;
-            --marvel-blue: #004a99;
-            --comic-yellow: #fef100;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ঈদ মোবারক - ডিজিটাল কার্ড</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #1a6b3c;
+    --green-light: #2d9e5f;
+    --green-dark: #0f4025;
+    --gold: #c9a227;
+    --gold-light: #f0c94a;
+    --cream: #fdf6e3;
+    --red: #c0392b;
+    --sky: #1a1a3e;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Hind Siliguri', sans-serif;
+    background: var(--sky);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
 
-        body {
-            font-family: 'Hind Siliguri', sans-serif;
-            background: #111;
-            color: #fff;
-            margin: 0;
-            overflow: hidden;
-        }
+  /* ===== SKY BACKGROUND ===== */
+  #sky-canvas {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0; pointer-events: none;
+  }
 
-        /* --- Stage 1: Input Page --- */
-        #inputPage {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: radial-gradient(circle, var(--marvel-blue), #000);
-        }
+  /* ===== MOON ===== */
+  .moon {
+    position: fixed;
+    top: 30px; right: 30px;
+    width: 70px; height: 70px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 40%, #fffde0, #f5d020 60%, #c9a020);
+    box-shadow: 0 0 30px 10px rgba(249,215,28,0.5), 0 0 60px 20px rgba(249,215,28,0.2);
+    animation: moonGlow 3s ease-in-out infinite;
+    z-index: 2;
+  }
+  @keyframes moonGlow {
+    0%,100% { box-shadow: 0 0 30px 10px rgba(249,215,28,0.5), 0 0 60px 20px rgba(249,215,28,0.2); }
+    50% { box-shadow: 0 0 50px 20px rgba(249,215,28,0.8), 0 0 100px 40px rgba(249,215,28,0.3); }
+  }
 
-        .marvel-title {
-            font-family: 'Bangers', cursive;
-            font-size: 60px;
-            color: white;
-            background: var(--marvel-red);
-            padding: 5px 25px;
-            margin-bottom: 30px;
-            border: 4px solid white;
-            transform: skew(-10deg);
-            box-shadow: 8px 8px 0px #000;
-        }
+  /* ===== STARS ===== */
+  .star {
+    position: fixed;
+    background: #fff;
+    border-radius: 50%;
+    animation: blink var(--d, 2s) ease-in-out infinite;
+    animation-delay: var(--dl, 0s);
+    z-index: 1;
+  }
+  @keyframes blink {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.1; transform: scale(0.5); }
+  }
 
-        .input-box {
-            padding: 15px;
-            width: 280px;
-            border: 4px solid #000;
-            font-size: 18px;
-            margin-bottom: 15px;
-            font-weight: bold;
-            outline: none;
-        }
+  /* ===== ANIMALS ===== */
+  .animal {
+    position: fixed;
+    bottom: 0;
+    z-index: 3;
+    animation: runAnimal linear infinite;
+    font-size: 48px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+    user-select: none;
+    pointer-events: none;
+  }
+  .cow { animation-duration: 12s; animation-name: runCow; }
+  .goat { animation-duration: 9s; animation-name: runGoat; animation-delay: -4s; }
+  @keyframes runCow {
+    0% { left: -80px; transform: scaleX(1); }
+    49% { left: 110%; transform: scaleX(1); }
+    50% { left: 110%; transform: scaleX(-1); }
+    99% { left: -80px; transform: scaleX(-1); }
+    100% { left: -80px; transform: scaleX(1); }
+  }
+  @keyframes runGoat {
+    0% { left: 110%; transform: scaleX(-1); }
+    49% { left: -80px; transform: scaleX(-1); }
+    50% { left: -80px; transform: scaleX(1); }
+    99% { left: 110%; transform: scaleX(1); }
+    100% { left: 110%; transform: scaleX(-1); }
+  }
 
-        .btn-gen {
-            background: var(--comic-yellow);
-            color: #000;
-            padding: 15px 40px;
-            border: 4px solid #000;
-            font-weight: 900;
-            font-size: 22px;
-            cursor: pointer;
-            box-shadow: 5px 5px 0px var(--marvel-red);
-            font-family: 'Bangers', cursive;
-            letter-spacing: 1px;
-        }
+  /* ===== GRASS ===== */
+  .grass-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 40px;
+    background: linear-gradient(180deg, #1a6b3c, #0f4025);
+    z-index: 2;
+    border-top: 3px solid #2d9e5f;
+  }
 
-        /* --- Stage 2: Loading Screen --- */
-        #loadingScreen {
-            display: none;
-            height: 100vh;
-            background: #000;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
+  /* ===== FIREWORKS ===== */
+  .firework {
+    position: fixed;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    animation: firework-burst 2s ease-out infinite;
+    z-index: 4;
+    pointer-events: none;
+  }
+  @keyframes firework-burst {
+    0% { transform: scale(0); opacity: 1; box-shadow: none; }
+    50% { opacity: 1; }
+    100% {
+      transform: scale(1);
+      opacity: 0;
+      box-shadow:
+        0 -60px 0 rgba(255,200,0,0.8),
+        0 60px 0 rgba(255,100,0,0.8),
+        60px 0 0 rgba(0,200,255,0.8),
+        -60px 0 0 rgba(200,0,255,0.8),
+        42px -42px 0 rgba(255,50,100,0.8),
+        -42px -42px 0 rgba(100,255,50,0.8),
+        42px 42px 0 rgba(255,200,50,0.8),
+        -42px 42px 0 rgba(50,100,255,0.8);
+    }
+  }
 
-        .cow-runner {
-            font-size: 100px;
-            position: relative;
-            animation: run 1s infinite alternate ease-in-out;
-        }
+  /* ===== LANTERNS (আলোকসজ্জা) ===== */
+  .lantern-row {
+    position: fixed; top: 0; left: 0; right: 0;
+    display: flex; justify-content: space-around;
+    padding: 0 10px;
+    z-index: 5; pointer-events: none;
+  }
+  .lantern {
+    width: 18px; height: 26px;
+    background: var(--gold);
+    border-radius: 3px 3px 6px 6px;
+    position: relative;
+    animation: lanternSwing 4s ease-in-out infinite;
+    transform-origin: top center;
+    margin-top: 10px;
+  }
+  .lantern::before {
+    content: '';
+    position: absolute;
+    top: -8px; left: 50%; transform: translateX(-50%);
+    width: 2px; height: 10px;
+    background: var(--gold);
+  }
+  .lantern::after {
+    content: '';
+    position: absolute;
+    bottom: -6px; left: 50%; transform: translateX(-50%);
+    width: 2px; height: 8px;
+    background: var(--gold-light);
+  }
+  @keyframes lanternSwing {
+    0%,100% { transform: rotate(-15deg); }
+    50% { transform: rotate(15deg); }
+  }
+  .lantern-wire {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 12px;
+    background: repeating-linear-gradient(90deg, transparent 0, transparent 60px, #8b6914 60px, #8b6914 62px);
+    z-index: 5;
+    pointer-events: none;
+  }
 
-        @keyframes run {
-            from { transform: translateX(-50px) scaleX(1); }
-            to { transform: translateX(50px) scaleX(-1); }
-        }
+  /* ===== MAIN CONTENT ===== */
+  .app-wrap {
+    position: relative;
+    z-index: 10;
+    min-height: 100vh;
+    padding: 70px 0 100px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .card-box {
+    background: rgba(15,64,37,0.85);
+    border: 2px solid var(--gold);
+    border-radius: 20px;
+    padding: 28px 22px 32px;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 14px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,215,0,0.2);
+  }
 
-        .progress-bar {
-            width: 80%;
-            max-width: 400px;
-            height: 25px;
-            background: #333;
-            border: 3px solid #fff;
-            margin-top: 30px;
-            position: relative;
-            overflow: hidden;
-        }
+  /* ===== HEADER ===== */
+  .header-title {
+    font-family: 'Noto Serif Bengali', serif;
+    color: var(--gold-light);
+    font-size: 26px;
+    font-weight: 900;
+    text-align: center;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    text-shadow: 0 0 20px rgba(240,201,74,0.6);
+  }
+  .header-sub {
+    color: rgba(253,246,227,0.7);
+    font-size: 13px;
+    text-align: center;
+    margin-bottom: 22px;
+  }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--marvel-red);
-            width: 0%;
-            transition: 0.2s linear;
-        }
+  /* ===== STEPS INDICATOR ===== */
+  .steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 26px;
+  }
+  .step-dot {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    color: var(--gold);
+    transition: all 0.4s;
+    flex-shrink: 0;
+  }
+  .step-dot.active {
+    background: var(--gold);
+    color: var(--green-dark);
+  }
+  .step-dot.done {
+    background: var(--green-light);
+    border-color: var(--green-light);
+    color: #fff;
+  }
+  .step-line {
+    flex: 1;
+    height: 2px;
+    background: rgba(201,162,39,0.3);
+    max-width: 60px;
+    transition: background 0.4s;
+  }
+  .step-line.done { background: var(--green-light); }
 
-        /* --- Stage 3: Comic Page --- */
-        #comicPage {
-            display: none;
-            height: 100vh;
-            background: url('https://www.transparenttextures.com/patterns/comic-book.png'), #ddd;
-            color: #000;
-            position: relative;
-        }
+  /* ===== FORM ELEMENTS ===== */
+  .form-label {
+    display: block;
+    color: var(--gold-light);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+  }
+  .form-input {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1.5px solid rgba(201,162,39,0.4);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--cream);
+    font-size: 15px;
+    font-family: 'Hind Siliguri', sans-serif;
+    outline: none;
+    transition: border-color 0.3s;
+    margin-bottom: 16px;
+  }
+  .form-input:focus { border-color: var(--gold); }
+  .form-input::placeholder { color: rgba(253,246,227,0.35); }
 
-        .comic-container {
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+  textarea.form-input { resize: vertical; min-height: 90px; }
 
-        .comic-panel {
-            background: white;
-            border: 6px solid #000;
-            width: 100%;
-            max-width: 500px;
-            min-height: 450px;
-            padding: 25px;
-            position: relative;
-            box-shadow: 15px 15px 0px rgba(0,0,0,0.3);
-            background-image: radial-gradient(#bbb 0.5px, transparent 0.5px);
-            background-size: 10px 10px;
-        }
+  /* ===== PHOTO UPLOAD ===== */
+  .photo-upload-area {
+    border: 2px dashed rgba(201,162,39,0.4);
+    border-radius: 12px;
+    padding: 22px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+    margin-bottom: 20px;
+    background: rgba(0,0,0,0.15);
+  }
+  .photo-upload-area:hover { border-color: var(--gold); }
+  .photo-upload-area .upload-icon { font-size: 36px; display: block; margin-bottom: 8px; }
+  .photo-upload-area p { color: rgba(253,246,227,0.6); font-size: 13px; }
+  .photo-upload-area .upload-name { color: var(--gold-light); font-size: 13px; font-weight: 600; margin-top: 6px; display: none; }
+  #photoFile { display: none; }
+  .photo-preview {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--gold);
+    display: none;
+    margin: 0 auto 8px;
+  }
 
-        .nav-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--marvel-red);
-            color: white;
-            border: 4px solid black;
-            width: 55px;
-            height: 55px;
-            font-size: 25px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 100;
-            transition: 0.2s;
-        }
-        .nav-btn:active { transform: translateY(-50%) scale(0.9); }
-        .nav-btn:disabled { background: #666; cursor: not-allowed; }
+  /* ===== BUTTONS ===== */
+  .btn-main {
+    width: 100%;
+    background: linear-gradient(135deg, #c9a227, #f0c94a);
+    color: var(--green-dark);
+    font-size: 17px;
+    font-weight: 700;
+    font-family: 'Hind Siliguri', sans-serif;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 20px rgba(201,162,39,0.4);
+    margin-top: 8px;
+  }
+  .btn-main:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(201,162,39,0.6); }
+  .btn-main:active { transform: translateY(0); }
 
-        .nav-left { left: 15px; }
-        .nav-right { right: 15px; }
+  /* ===== PAYMENT PAGE ===== */
+  .payment-summary {
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(201,162,39,0.3);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .payment-row {
+    display: flex; justify-content: space-between;
+    align-items: center;
+    color: rgba(253,246,227,0.8);
+    font-size: 14px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .payment-row:last-child { border-bottom: none; font-weight: 700; font-size: 16px; color: var(--gold-light); }
 
-        .scene-text {
-            background: var(--comic-yellow);
-            border: 3px solid black;
-            padding: 12px;
-            font-weight: bold;
-            margin: 15px 0;
-            font-style: italic;
-        }
+  .bkash-box {
+    background: rgba(220,30,90,0.12);
+    border: 1.5px solid #dc1e5a;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .bkash-logo {
+    font-size: 24px;
+    font-weight: 900;
+    color: #e2387a;
+    letter-spacing: -1px;
+    white-space: nowrap;
+    font-family: serif;
+  }
+  .bkash-number { color: var(--cream); font-size: 14px; }
+  .bkash-num-big { color: #e2387a; font-weight: 700; font-size: 18px; display: block; }
 
-        .bubble {
-            background: white;
-            border: 3px solid black;
-            border-radius: 25px;
-            padding: 15px;
-            position: relative;
-            font-weight: 700;
-            font-size: 18px;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            box-shadow: 5px 5px 0px #eee;
-        }
+  /* ===== LINK PAGE ===== */
+  .success-icon { font-size: 64px; text-align: center; display: block; margin-bottom: 12px; }
+  .success-title {
+    font-family: 'Noto Serif Bengali', serif;
+    color: var(--gold-light);
+    font-size: 22px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .success-sub {
+    color: rgba(253,246,227,0.7);
+    text-align: center;
+    font-size: 14px;
+    margin-bottom: 22px;
+    line-height: 1.6;
+  }
+  .pending-badge {
+    background: rgba(255,165,0,0.15);
+    border: 1.5px solid orange;
+    color: orange;
+    border-radius: 20px;
+    padding: 5px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    display: inline-block;
+    margin: 0 auto 20px;
+    display: block;
+    text-align: center;
+    max-width: 180px;
+    margin: 0 auto 20px;
+  }
+  .link-box {
+    background: rgba(0,0,0,0.35);
+    border: 1.5px solid rgba(201,162,39,0.4);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    word-break: break-all;
+    color: var(--gold-light);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .btn-copy {
+    width: 100%;
+    background: transparent;
+    border: 2px solid var(--gold);
+    color: var(--gold-light);
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Hind Siliguri', sans-serif;
+    padding: 13px;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.3s;
+  }
+  .btn-copy:hover { background: rgba(201,162,39,0.15); }
+  .btn-copy.copied { background: var(--green-light); border-color: var(--green-light); color: #fff; }
 
-        .bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 30px;
-            border-width: 15px 15px 0 0;
-            border-style: solid;
-            border-color: black transparent transparent transparent;
-        }
+  .note-box {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: rgba(253,246,227,0.6);
+    font-size: 12px;
+    line-height: 1.7;
+    text-align: center;
+    margin-top: 14px;
+  }
 
-        .super-cow-label {
-            position: absolute;
-            top: -20px;
-            left: 20px;
-            background: black;
-            color: white;
-            padding: 5px 15px;
-            font-family: 'Bangers';
-            transform: rotate(-3deg);
-        }
-    </style>
+  /* ===== PAGE TRANSITIONS ===== */
+  .page { display: none; animation: fadeIn 0.5s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  /* Decorative divider */
+  .divider {
+    display: flex; align-items: center; gap: 10px;
+    margin: 6px 0 20px;
+    color: rgba(201,162,39,0.5);
+    font-size: 18px;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1;
+    height: 1px;
+    background: rgba(201,162,39,0.3);
+  }
+
+  @media (max-width: 380px) {
+    .header-title { font-size: 22px; }
+    .card-box { padding: 22px 14px 26px; }
+  }
+</style>
 </head>
 <body>
 
-    <!-- Stage 1 -->
-    <div id="inputPage">
-        <div class="marvel-title">MARVEL COW</div>
-        <input type="text" id="userName" class="input-box" placeholder="আপনার নাম">
-        <input type="text" id="partnerName" class="input-box" placeholder="বন্ধুর নাম">
-        <button class="btn-gen" onclick="startGeneration()">GENERATE COMIC ⚡</button>
+<!-- Background canvas for stars -->
+<canvas id="sky-canvas"></canvas>
+
+<!-- Moon -->
+<div class="moon"></div>
+
+<!-- Lantern wire -->
+<div class="lantern-wire"></div>
+<div class="lantern-row" id="lanternRow"></div>
+
+<!-- Fireworks -->
+<div id="fireworks"></div>
+
+<!-- Animals -->
+<div class="animal cow" id="cow">🐄</div>
+<div class="animal goat" id="goat">🐐</div>
+
+<!-- Grass -->
+<div class="grass-bar"></div>
+
+<!-- MAIN APP -->
+<div class="app-wrap">
+  <div class="card-box">
+
+    <!-- HEADER -->
+    <div class="header-title">🌙 ঈদ উল আযহা মোবারক 🌙</div>
+    <div class="header-sub">কোরবানির আনন্দ ভাগ করুন প্রিয়জনের সাথে</div>
+
+    <!-- STEPS -->
+    <div class="steps">
+      <div class="step-dot active" id="dot1">১</div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-dot" id="dot2">২</div>
+      <div class="step-line" id="line2"></div>
+      <div class="step-dot" id="dot3">৩</div>
     </div>
 
-    <!-- Stage 2 -->
-    <div id="loadingScreen">
-        <div class="cow-runner">🐮🚀</div>
-        <div class="progress-bar">
-            <div id="fill" class="progress-fill"></div>
-        </div>
-        <h2 id="percentText" style="font-family: 'Bangers';">0%</h2>
-        <p style="font-weight: bold; letter-spacing: 1px;">SUPER COW IS RUNNING...</p>
+    <!-- ===== PAGE 1: CARD INFO ===== -->
+    <div class="page active" id="page1">
+      <label class="form-label">আপনার নাম (প্রেরক) *</label>
+      <input type="text" class="form-input" id="senderName" placeholder="যেমন: রাহেলা বেগম">
+
+      <label class="form-label">যাকে পাঠাবেন তার নাম *</label>
+      <input type="text" class="form-input" id="receiverName" placeholder="যেমন: আম্মু / Rahim bhai">
+
+      <label class="form-label">ঈদের বার্তা লিখুন</label>
+      <textarea class="form-input" id="message" placeholder="যেমন: ঈদ মোবারক! দোয়া রইল সবসময়..."></textarea>
+
+      <label class="form-label">প্রিয়জনের ছবি আপলোড করুন</label>
+      <div class="photo-upload-area" id="uploadArea" onclick="document.getElementById('photoFile').click()">
+        <img class="photo-preview" id="photoPreview" src="" alt="preview">
+        <span class="upload-icon" id="uploadIcon">📸</span>
+        <p>ক্লিক করে ছবি বেছে নিন</p>
+        <p class="upload-name" id="uploadName"></p>
+      </div>
+      <input type="file" id="photoFile" accept="image/*">
+
+      <button class="btn-main" onclick="goToPage2()">পরবর্তী ধাপ →</button>
     </div>
 
-    <!-- Stage 3 -->
-    <div id="comicPage">
-        <button id="prevBtn" class="nav-btn nav-left" onclick="prevPage()">◀</button>
-        <button id="nextBtn" class="nav-btn nav-right" onclick="nextPage()">▶</button>
-        
-        <div class="comic-container">
-            <div id="activePanel" class="comic-panel"></div>
+    <!-- ===== PAGE 2: PAYMENT ===== -->
+    <div class="page" id="page2">
+      <div class="payment-summary" id="paymentSummary"></div>
+
+      <div class="bkash-box">
+        <div class="bkash-logo">bKash</div>
+        <div class="bkash-number">
+          <span style="color:rgba(253,246,227,0.6);font-size:12px">পার্সোনাল নম্বরে পাঠান</span>
+          <span class="bkash-num-big">01870646388</span>
         </div>
+      </div>
+
+      <div class="divider">✂</div>
+
+      <label class="form-label">bKash ট্রান্জেকশন আইডি (TrxID) *</label>
+      <input type="text" class="form-input" id="trxId" placeholder="যেমন: BXD8A2K3L9">
+
+      <label class="form-label">আপনার bKash নম্বর *</label>
+      <input type="text" class="form-input" id="bkashNum" placeholder="01XXXXXXXXX" maxlength="11">
+
+      <button class="btn-main" onclick="submitOrder()">কার্ড তৈরি করুন</button>
+      <button onclick="goTo(1)" style="width:100%;background:transparent;border:none;color:rgba(253,246,227,0.5);font-size:13px;cursor:pointer;padding:12px;font-family:'Hind Siliguri',sans-serif">← আগের ধাপে ফিরুন</button>
     </div>
+
+    <!-- ===== PAGE 3: LINK ===== -->
+    <div class="page" id="page3">
+      <span class="success-icon">🎉</span>
+      <div class="success-title">অর্ডার পাওয়া গেছে!</div>
+      <p class="success-sub">আপনার পেমেন্ট যাচাই হওয়ার পর কার্ডের লিংক সক্রিয় হবে। সাধারণত ১–৩০ মিনিটের মধ্যে।</p>
+
+      <div class="pending-badge">⏳ যাচাই চলছে...</div>
+
+      <div style="margin:20px 0 8px;color:rgba(253,246,227,0.6);font-size:13px;text-align:center">আপনার কার্ডের লিংক:</div>
+      <div class="link-box" id="generatedLink">https://eidcard.com/card/eid2025-XXXXXX</div>
+
+      <button class="btn-copy" id="copyBtn" onclick="copyLink()">📋 লিংক কপি করুন</button>
+  </div>
+</div>
+
+<!-- BACKGROUND MUSIC (optional — user should replace src with actual music file) -->
+<audio id="bgMusic" loop autoplay>
+  <!-- Replace with your actual music file URL -->
+  <!-- <source src="eid-music.mp3" type="audio/mpeg"> -->
+</audio>
 
 <script>
-    const API_KEY = "AIzaSyCK1SxZXfrGDtw40CBTwss_we2tlWm7uAQ";
-    let storyData = [];
-    let currentPage = 0;
+  
+// ===== STATE =====
+let selectedCard = 'standard';
+let photoDataURL = '';
+let generatedLinkValue = '';
 
-    async function startGeneration() {
-        const user = document.getElementById('userName').value;
-        const partner = document.getElementById('partnerName').value;
-        if (!user || !partner) return alert("দয়া করে নামগুলো লিখুন!");
+// ===== STARS =====
+(function createStars() {
+  const count = 60;
+  for(let i = 0; i < count; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 3 + 1;
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*70}%;
+      width:${size}px; height:${size}px;
+      --d:${1.5+Math.random()*3}s;
+      --dl:${Math.random()*3}s;
+    `;
+    document.body.appendChild(s);
+  }
+})();
 
-        document.getElementById('inputPage').style.display = 'none';
-        document.getElementById('loadingScreen').style.display = 'flex';
+// ===== LANTERNS =====
+(function createLanterns() {
+  const row = document.getElementById('lanternRow');
+  const colors = ['#c9a227','#dc1e5a','#2d9e5f','#9b59b6','#e67e22'];
+  for(let i = 0; i < 10; i++) {
+    const l = document.createElement('div');
+    l.className = 'lantern';
+    l.style.background = colors[i % colors.length];
+    l.style.animationDelay = (i * 0.4) + 's';
+    row.appendChild(l);
+  }
+})();
 
-        // প্রোগ্রেস বার এনিমেশন
-        let progress = 0;
-        const interval = setInterval(() => {
-            if (progress < 95) {
-                progress += Math.random() * 5;
-                updateLoading(progress);
-            }
-        }, 300);
+// ===== FIREWORKS =====
+(function createFireworks() {
+  const container = document.getElementById('fireworks');
+  const positions = [
+    {top:'15%',left:'10%'},{top:'20%',left:'80%'},{top:'35%',left:'50%'},
+    {top:'10%',left:'35%'},{top:'40%',left:'20%'}
+  ];
+  positions.forEach((pos, i) => {
+    const f = document.createElement('div');
+    f.className = 'firework';
+    const colors = ['#ff0','#f0c','#0cf','#fc0','#0f8'];
+    f.style.cssText = `
+      top:${pos.top}; left:${pos.left};
+      background:${colors[i]};
+      animation-delay:${i * 0.7}s;
+      animation-duration:${2+Math.random()}s;
+    `;
+    container.appendChild(f);
+  });
+})();
 
-        // আরও শক্তিশালী প্রম্পট
-        const prompt = `Create a 5-Page Funny Superhero Comic Script.
-        Theme: Marvel Comics Style, Superhero Cow vs Qurbani Haat.
-        Characters: ${user} (Hero) and ${partner} (Sidekick).
-        Language: Bengali.
-        
-        Format (Strictly follow for 5 pages):
-        Page [Number] | Title | Scene | Dialogue
-        
-        Make it very funny. Use '|' as the only separator. Ensure 5 distinct pages.`;
+// ===== PHOTO UPLOAD =====
+document.getElementById('photoFile').addEventListener('change', function(e) {
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    photoDataURL = ev.target.result;
+    const preview = document.getElementById('photoPreview');
+    preview.src = photoDataURL;
+    preview.style.display = 'block';
+    document.getElementById('uploadIcon').style.display = 'none';
+    document.getElementById('uploadName').style.display = 'block';
+    document.getElementById('uploadName').textContent = '✅ ' + file.name;
+  };
+  reader.readAsDataURL(file);
+});
 
-        try {
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-            const data = await response.json();
-            const text = data.candidates[0].content.parts[0].text;
-            
-            // ডাটা প্রসেসিং (উন্নত Regex)
-            storyData = text.split(/Page \d+|Page\d+|পৃষ্ঠা \d+|পৃষ্ঠা\d+/i)
-                            .map(p => p.trim())
-                            .filter(p => p.length > 15);
+// ===== CARD TYPE =====
+function selectCard(type) {
+  selectedCard = type;
+  document.getElementById('btnStandard').classList.toggle('selected', type === 'standard');
+  document.getElementById('btnPremium').classList.toggle('selected', type === 'premium');
+}
 
-            progress = 100;
-            updateLoading(100);
-            clearInterval(interval);
+// ===== NAVIGATION =====
+function goTo(n) {
+  document.querySelectorAll('.page').forEach((p,i) => {
+    p.classList.toggle('active', i === n-1);
+  });
+  // update dots
+  for(let i = 1; i <= 3; i++) {
+    const dot = document.getElementById('dot'+i);
+    dot.classList.remove('active','done');
+    if(i < n) dot.classList.add('done');
+    else if(i === n) dot.classList.add('active');
+  }
+  for(let i = 1; i <= 2; i++) {
+    const line = document.getElementById('line'+i);
+    line.classList.toggle('done', i < n);
+  }
+  document.querySelector('.app-wrap').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
 
-            setTimeout(() => {
-                document.getElementById('loadingScreen').style.display = 'none';
-                document.getElementById('comicPage').style.display = 'block';
-                renderPage();
-            }, 1000);
+function goToPage2() {
+  const sender = document.getElementById('senderName').value.trim();
+  const receiver = document.getElementById('receiverName').value.trim();
+  if(!sender || !receiver) {
+    alert('অনুগ্রহ করে প্রেরক ও প্রাপকের নাম লিখুন।');
+    return;
+  }
+  // Build payment summary
+  const price = selectedCard === 'premium' ? '৳২৯' : '৳১৯';
+  const cardName = selectedCard === 'premium' ? 'প্রিমিয়াম কার্ড' : 'স্ট্যান্ডার্ড কার্ড';
+  document.getElementById('paymentSummary').innerHTML = `
+    <div class="payment-row"><span>প্রাপকের নাম</span><span>${receiver}</span></div>
+    <div class="payment-row"><span>কার্ডের ধরন</span><span>${cardName}</span></div>
+    <div class="payment-row"><span>মোট পরিমাণ</span><span>${price}</span></div>
+  `;
+  goTo(2);
+}
 
-        } catch (e) {
-            alert("Connection Error! Please check your API key.");
-            location.reload();
-        }
-    }
+function submitOrder() {
+  const trxId = document.getElementById('trxId').value.trim();
+  const bkashNum = document.getElementById('bkashNum').value.trim();
+  if(!trxId || !bkashNum) {
+    alert('অনুগ্রহ করে TrxID এবং bKash নম্বর দিন।');
+    return;
+  }
+  
+  // Get user data
+  const sender = document.getElementById('senderName').value.trim();
+  const receiver = document.getElementById('receiverName').value.trim();
+  const message = document.getElementById('message').value.trim() || 'পবিত্র কোরবানির এই আনন্দঘন মূহুর্তে আপনার জীবন ভরে উঠুক অনাবিল শান্তিতে।';
+  
+  // Generate unique ID
+  const uid = 'eid2025-' + Math.random().toString(36).substring(2,9).toUpperCase();
+  
+  // Encode user data in URL parameters
+  const params = new URLSearchParams({
+    id: uid,
+    from: sender,
+    to: receiver,
+    msg: message,
+    photo: photoDataURL || ''
+  });
+  
+  // Generate link to card.html with user data
+  generatedLinkValue = window.location.origin + window.location.pathname.replace('eid-card.html', 'card.html') + '?' + params.toString();
+  
+  document.getElementById('generatedLink').textContent = generatedLinkValue;
+  goTo(3);
+}
 
-    function updateLoading(value) {
-        document.getElementById('fill').style.width = value + '%';
-        document.getElementById('percentText').innerText = Math.floor(value) + '%';
-    }
+// ===== COPY LINK =====
+function copyLink() {
+  navigator.clipboard.writeText(generatedLinkValue).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ কপি হয়ে গেছে!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 লিংক কপি করুন';
+      btn.classList.remove('copied');
+    }, 2500);
+  }).catch(() => {
+    const el = document.getElementById('generatedLink');
+    const range = document.createRange();
+    range.selectNode(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    document.execCommand('copy');
+    alert('লিংক কপি হয়েছে!');
+  });
+}
 
-    function renderPage() {
-        const panel = document.getElementById('activePanel');
-        const content = storyData[currentPage] || "গল্প লোড হতে সমস্যা হয়েছে|দুঃখিত|আবার চেষ্টা করুন";
-        const parts = content.split('|');
-        
-        panel.innerHTML = `
-            <div class="super-cow-label">PANEL #${currentPage + 1}</div>
-            <h2 style="font-family: 'Bangers'; border-bottom: 5px solid var(--marvel-red); margin-top: 10px; font-size: 28px;">${parts[0] || 'SUPER COW'}</h2>
-            <div class="scene-text">🎬 ${parts[1] || 'দৃশ্যপট তৈরি হচ্ছে...'}</div>
-            <div class="bubble">🗨️ ${parts[2] || 'কথা বলছে...'}</div>
-            <div style="margin-top: 25px; font-weight: 900; text-align: center; border-top: 2px dashed #000; padding-top: 10px;">
-                PAGE ${currentPage + 1} / ${storyData.length}
-            </div>
-        `;
+// ===== SHARE LINK =====
+function shareLink() {
+  const sender = document.getElementById('senderName').value.trim() || 'আমি';
+  const receiver = document.getElementById('receiverName').value.trim() || 'আপনি';
+  const text = `🌙 ঈদ মোবারক! ${sender}-এর পক্ষ থেকে ${receiver}-কে বিশেষ ঈদ কার্ড:\n${generatedLinkValue}`;
+  if(navigator.share) {
+    navigator.share({ title: 'ঈদ কার্ড', text: text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert('টেক্সট কপি হয়েছে! WhatsApp বা Messenger-এ পাঠান।'));
+  }
+}
 
-        // বাটন কন্ট্রোল
-        document.getElementById('prevBtn').disabled = (currentPage === 0);
-        document.getElementById('nextBtn').disabled = (currentPage === storyData.length - 1);
-    }
-
-    function nextPage() {
-        if (currentPage < storyData.length - 1) {
-            currentPage++;
-            renderPage();
-        }
-    }
-
-    function prevPage() {
-        if (currentPage > 0) {
-            currentPage--;
-            renderPage();
-        }
-    }
+// ===== TRY TO PLAY MUSIC ON FIRST INTERACTION =====
+document.body.addEventListener('click', function tryMusic() {
+  const audio = document.getElementById('bgMusic');
+  if(audio.src) audio.play().catch(()=>{});
+  document.body.removeEventListener('click', tryMusic);
+}, { once: true });
 </script>
-
 </body>
 </html>
